@@ -3,6 +3,62 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 /**
+ * Textures
+ */
+// You can use one texture loader to load multiple textures!
+const loadingManager = new THREE.LoadingManager()
+
+/* loadingManager.onStart = () =>
+{
+    console.log('loading started')
+}
+loadingManager.onProgress = () =>
+{
+    console.log('loading progressing')
+}
+loadingManager.onLoad = () =>
+{
+    console.log('loading finished')
+}
+loadingManager.onError = () =>
+{
+    console.log('loading error')
+} */
+
+const textureLoader = new THREE.TextureLoader(loadingManager)
+
+const colorTexture = textureLoader.load('/textures/door/color.jpg')
+const checkboardTexture = textureLoader.load('/textures/checkerboard-8x8.png')
+const minecraftTexture = textureLoader.load('/textures/minecraft.png')
+const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+const heightTexture = textureLoader.load('/textures/door/height.jpg')
+const normalTexture = textureLoader.load('/textures/door/normal.jpg')
+const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
+const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
+const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
+
+// Repeat
+/* colorTexture.repeat.x = 2
+colorTexture.repeat.y = 3
+colorTexture.wrapS = THREE.MirroredRepeatWrapping
+colorTexture.wrapT = THREE.MirroredRepeatWrapping */
+
+// Offset
+/* colorTexture.offset.x = 0.5
+colorTexture.offset.y = 0.5 */
+
+// Rotations
+/* colorTexture.rotation = Math.PI / 4 // (The value is in radian)
+colorTexture.center.x = 0.5
+colorTexture.center.y = 0.5 */
+
+// Minification
+/* checkboardTexture.minFilter = THREE.NearestFilter */
+
+// Magnification
+minecraftTexture.magFilter = THREE.NearestFilter
+
+/**
  * Base
  */
 // Canvas
@@ -15,7 +71,8 @@ const scene = new THREE.Scene()
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+// console.log(geometry.attributes)
+const material = new THREE.MeshBasicMaterial({ map: minecraftTexture })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
