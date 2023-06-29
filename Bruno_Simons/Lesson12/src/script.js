@@ -90,6 +90,15 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
+    // Update Objects
+    sphere.rotation.y = 0.1 * elapsedTime
+    plane.rotation.y = 0.1 * elapsedTime
+    torus.rotation.y = 0.1 * elapsedTime
+
+    sphere.rotation.x = 0.15 * elapsedTime
+    plane.rotation.x = 0.15 * elapsedTime
+    torus.rotation.x = 0.15 * elapsedTime
+
     // Update controls
     controls.update()
 
