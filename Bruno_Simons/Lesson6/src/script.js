@@ -1,8 +1,5 @@
-import './style.css'
 import * as THREE from 'three'
-import gsap from 'gsap'
 
-console.log(gsap)
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -26,28 +23,9 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 camera.position.z = 3
 scene.add(camera)
 
-// Axes Helper
-const axesHelper = new THREE.AxesHelper(5)
-scene.add(axesHelper)
-
 // Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
-
-// Gsap
-gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 })
-gsap.to(mesh.position, { duration: 1, delay: 2, x: 0 })
-
-// Animations
-const tick = () => {
-    // console.log('tick')
-    
-    // Render
-    renderer.render(scene, camera)
-
-    window.requestAnimationFrame(tick)
-}
-
-tick()
+renderer.render(scene, camera)

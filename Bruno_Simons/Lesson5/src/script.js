@@ -1,8 +1,6 @@
-import './style.css'
 import * as THREE from 'three'
-import { Camera, Group, MeshBasicMaterial } from 'three'
 
-console.log('Hello World.js')
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -10,73 +8,50 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
+ * Axes Helper
+ */
+const axesHelper = new THREE.AxesHelper(2)
+scene.add(axesHelper)
+
+/**
  * Objects
  */
-/* const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh) */
-
-// Position
-// mesh.position.x = 0.7
-// mesh.position.y = -0.6
-// mesh.position.z = 1
-/* mesh.position.set(0.7, -0.6, 1) */
-
-// Scale
-// mesh.scale.x = 2
-// mesh.scale.y = 0.5
-// mesh.scale.z = 0.5
-/* mesh.scale.set(2, 0.5, 0.5) */
-
-// console.log(mesh.position.normalize())
-// console.log(mesh.position.length())
-
-
-
-// Rotation
-/* mesh.rotation.reorder('YXZ')
-mesh.rotation.x = Math.PI * 0.25
-mesh.rotation.y = Math.PI * 0.25 */
-
-// Now we will create a group of 3 cubes
-const cubez = new THREE.Group()
-cubez.position.y = 1
-cubez.scale.y = 0.5
-cubez.rotation.x = 1
-scene.add(cubez)
+const cubes = new THREE.Group()
+scene.add(cubes)
 
 const cube1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: 0xff0000})
 )
-cubez.add(cube1)
+cubes.add(cube1)
 
 const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: 0x00ff00})
 )
-cube2.position.x = -2
-cubez.add(cube2)
+cubes.add(cube2)
 
 const cube3 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0x0000ff })
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: 0x0000ff})
 )
-cube3.position.x = 2
-cubez.add(cube3)
+cubes.add(cube3)
+
+cube1.position.set(2,0,0)
+cube2.position.set(0,0,0)
+cube3.position.set(-2,0,0)
+cubes.position.y = -0.2
+cubes.scale.set(0.5,1.2,3)
+cubes.rotation.set(Math.PI/2,Math.PI/4,Math.PI/8)
 
 
-// Axes Helper
-const axesHelper= new THREE.AxesHelper(3)
-scene.add(axesHelper)
 
 /**
  * Sizes
  */
 const sizes = {
-    width: 800,
-    height: 600
+    width: 2000,
+    height: 850
 }
 
 /**
@@ -84,13 +59,7 @@ const sizes = {
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 camera.position.z = 3
-// camera.position.set(1, 1, 3)
 scene.add(camera)
-
-// camera.lookAt(new THREE.Vector3(3, 0, 0)) // Use the coordinates for the Object!
-/* camera.lookAt(mesh.position) */ // Position of Cube
-
-/* console.log(mesh.position.distanceTo (camera.position)) */
 
 /**
  * Renderer
