@@ -1,0 +1,25 @@
+/* *
+{
+    background-color: black;
+} */
+/* *
+{
+    margin: 0;
+    padding: 0;
+} */
+
+/* For not allowing to scroll using trackpad (Useful when Orbit controls are off) */
+html,
+body
+{
+    overflow: hidden;
+}
+
+/* To remove the margins */
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
