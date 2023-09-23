@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 THREE.ColorManagement.enabled = false
 
@@ -15,6 +17,88 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/**
+ * Models
+ */
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/') 
+// Copied draco folder from '/node_modules/three/examples/jsm/libs/draco'
+// This will allow us to use a differnt cpu thread for uncompressing the models
+
+const gltfLoader = new GLTFLoader()
+gltfLoader.setDRACOLoader(dracoLoader)
+
+let mixer = null // Just to fix the scope issue in Tick section
+
+gltfLoader.load(
+
+    // Duck
+
+    /* '/models/Duck/glTF/Duck.gltf',
+    (gltf) =>
+    {
+        scene.add(gltf.scene.children[0]) // Default glTF
+    } */
+
+    /* '/models/Duck/glTF-Binary/Duck.glb',
+    (gltf) =>
+    {
+        scene.add(gltf.scene.children[0]) // glTF-Binary
+    } */
+
+    /* '/models/Duck/glTF-Embedded/Duck.gltf',
+    (gltf) =>
+    {
+        scene.add(gltf.scene.children[0]) // glTF-Embedded
+    } */
+
+    /* '/models/Duck/glTF-Draco/Duck.gltf',
+    (gltf) =>
+    {
+        scene.add(gltf.scene) // glTF-Draco
+    } */
+
+    // Flight Helmet
+    
+    /* '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+    (gltf) =>
+    {
+        scene.add(gltf.scene) // Simplest solution to add the whole group to the scene
+    } */
+
+    /* '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+    (gltf) =>
+    {
+        while(gltf.scene.children.length > 0)
+        {
+            scene.add(gltf.scene.children[0]) // Using a while loop to put all children in the scene
+        }
+    } */
+
+    /* '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+    (gltf) =>
+    {
+        const children = [...gltf.scene.children]
+        for(const child of children)
+        {
+            scene.add(child) // Copying the children to a const then using it
+        }
+    } */
+
+    '/models/Fox/glTF/Fox.gltf',
+    (gltf) =>
+    {
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[0])
+
+        action.play()
+
+        gltf.scene.scale.set(0.025, 0.025, 0.025)
+        scene.add(gltf.scene) // Default glTF
+    }
+
+)
 
 /**
  * Floor
@@ -107,6 +191,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
+
+    // Update mixer
+    if(mixer !== null)
+    {
+        mixer.update(deltaTime)
+    }
 
     // Update controls
     controls.update()
