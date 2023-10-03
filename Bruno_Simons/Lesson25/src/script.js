@@ -1,8 +1,10 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
+import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
+import { GroundProjectedSkybox } from 'three/addons/objects/GroundProjectedSkybox.js'
 
 /**
  * Loader
@@ -10,6 +12,8 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 const gltfLoader = new GLTFLoader()
 const cubeTextureloader = new THREE.CubeTextureLoader()
 const rgbeloader = new RGBELoader()
+const exrloader = new EXRLoader()
+const textureLoader = new THREE.TextureLoader()
 
 /**
  * Base
@@ -81,21 +85,85 @@ scene.environment = environmentMap
 scene.background = environmentMap */
 
 // HDR (RGBE) equirectangular
-rgbeloader.load('/environmentMaps/0/2k.hdr', (environmentMap) =>
+/* rgbeloader.load('/environmentMaps/blender-2k-1.hdr', (environmentMap) =>
 {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping
 
     scene.background = environmentMap
     scene.environment = environmentMap
-    // console.log(environmentMap)
+}) */
+
+// HDR (EXR) equirectangular
+/* exrloader.load('/environmentMaps/nvidiaCanvas-4k.exr', (environmentMap) =>
+{
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    scene.background = environmentMap
+    scene.environment = environmentMap
+
+}) */
+
+// LDR (equirectangular)
+/* textureLoader.load('/environmentMaps/blockadesLabsSkybox/anime_art_style_japan_streets_with_cherry_blossom_.jpg', (environmentMap) =>
+{
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    environmentMap.colorSpace = THREE.SRGBColorSpace
+    scene.background = environmentMap
+    scene.environment = environmentMap
+}) */
+
+// Ground Projected Skybox
+/* rgbeloader.load('/environmentMaps/2/2k.hdr', (environmentMap) =>
+{
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    scene.environment = environmentMap
+
+    // Skybox
+    const skybox = new GroundProjectedSkybox(environmentMap)
+    skybox.radius = 120
+    skybox.height = 11
+    skybox.scale.setScalar(50)
+    scene.add(skybox)
+
+    gui.add(skybox, 'radius', 1, 200, 0.1).name('skyboxRadius')
+    gui.add(skybox, 'height', 1, 200, 0.1).name('skyboxHeight')
+}) */
+
+// Real time environment map
+textureLoader.load('/environmentMaps/blockadesLabsSkybox/interior_views_cozy_wood_cabin_with_cauldron_and_p.jpg', (environmentMap) =>
+{
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    environmentMap.colorSpace = THREE.SRGBColorSpace
+    scene.background = environmentMap
+    // scene.environment = environmentMap
 })
+
+// Holy Donut
+const holyDonut = new THREE.Mesh(
+    new THREE.TorusGeometry(8, 0.5),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(10, 4, 2) })
+)
+holyDonut.position.y = 3.5
+holyDonut.layers.enable(1)
+scene.add(holyDonut)
+
+// Cube Render Target
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(
+    256, 
+    {
+        type: THREE.HalfFloatType
+    })
+scene.environment = cubeRenderTarget.texture
+
+// Cube Camera
+const cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+cubeCamera.layers.set(1)
 
 /**
  * Torus Knot
  */
 const torusKnot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
-    new THREE.MeshStandardMaterial({ roughness: 0.3, metalness: 1, color: 0xaaaaaa })
+    new THREE.MeshStandardMaterial({ roughness: 0, metalness: 1, color: 0xaaaaaa })
 )
 torusKnot.position.x = - 4
 torusKnot.position.y = 4
@@ -169,6 +237,14 @@ const tick = () =>
 {
     // Time
     const elapsedTime = clock.getElapsedTime()
+
+    // Real time environment map
+    if(holyDonut)
+    {
+        holyDonut.rotation.x = Math.sin(elapsedTime) * 2
+
+        cubeCamera.update(renderer, scene)
+    }
 
     // Update controls
     controls.update()
