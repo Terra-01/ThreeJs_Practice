@@ -23,4 +23,10 @@ export default class Sizes extends EventEmitter
             this.trigger('resize')
         })
     }
+
+    resize()
+    {
+        this.width = window.innerWidth
+        this.height = window.innerHeight
+    }
 }
